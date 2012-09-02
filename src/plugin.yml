@@ -1,0 +1,11 @@
+name: EchoTell
+main: me.cnaude.plugin.EchoTell.EchoTell
+version: 0.1.0
+authors: [cnaude]
+commands:
+  t:
+    description: Sends a message to another player
+    usage: /t [player] [message]
+permissions:
+  echotell:
+    description: Use /t [player] [message]
