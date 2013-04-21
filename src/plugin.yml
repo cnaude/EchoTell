@@ -6,6 +6,10 @@ commands:
   t:
     description: Sends a message to another player
     usage: /t [player] [message]
+  r:
+    description: Reply to a message sent with /t
+    usage: /r [message]
+    aliases: [reply]
 permissions:
   echotell:
-    description: Use /t [player] [message]
+    description: Use /t [player] [message] and /r [message]
