@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
 /**
  *
  * @author cnaude
@@ -21,56 +22,47 @@ public class EchoTell extends JavaPlugin implements CommandExecutor {
 
     private SenderLookup senderLookup;
 
-    @Override 
+    @Override
     public void onEnable() {
         senderLookup = new SenderLookup();
         registerCommand("t");
         registerCommand("r");
-    }    
-    
+    }
+
     @Override
-     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
         if (sender instanceof Player) {
-            if (!sender.hasPermission("echotell")) {
-                return false;
+            if (sender.hasPermission("echotell") || sender.hasPermission("echotell.use")) {
+                if (cmd.getName().equalsIgnoreCase("r")) {
+                    if (args.length < 1) {
+                        sender.sendMessage(ChatColor.RED + "Usage: " + replyUsageMessage);
+                        return true;
+                    }
+                    String receiverName = senderLookup.getLastSender(sender);
+                    if (receiverName == null) {
+                        sender.sendMessage(ChatColor.RED + "Last sender could not be found.");
+                        return true;
+                    }
+                    Player playerReceiver = getServer().getPlayerExact(receiverName);
+                    if (playerReceiver == null) {
+                        sender.sendMessage(ChatColor.RED + "Sorry player " + receiverName + " could not be found or is not a valid player.");
+                        return true;
+                    }
+                    sendWhisper(sender, playerReceiver, args, 0);
+                } else if (cmd.getName().equalsIgnoreCase("t")) {
+                    if (args.length < 2) {
+                        sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+                        return true;
+                    }
+                    Player player = getServer().getPlayerExact(args[0]);
+                    sendWhisper(sender, player, args, 1);
+                }
+            } else {
+                sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
             }
         }
-
-        if (cmd.getName().equalsIgnoreCase("r")) {
-            if (args.length < 1) {
-                sender.sendMessage(ChatColor.RED + "Usage: " + replyUsageMessage);
-                return true;
-            }
-
-            String receiverName = senderLookup.getLastSender(sender);
-
-            if (receiverName == null) {
-                sender.sendMessage(ChatColor.RED + "Last sender could not be found.");
-                return true;
-            }
-
-            Player playerReceiver = getServer().getPlayerExact(receiverName);
-
-            if (playerReceiver == null) {
-                sender.sendMessage(ChatColor.RED + "Sorry player " + receiverName + " could not be found or is not a valid player.");
-                return true;
-            }
-
-            sendWhisper(sender, playerReceiver, args, 0);
-
-        } else if (cmd.getName().equalsIgnoreCase("t")) {
-            if (args.length < 2)  {
-                sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-                return true;
-            }
-
-            Player player = getServer().getPlayerExact(args[0]);
-
-            sendWhisper(sender, player, args, 1);
-        }
-
         return true;
-     }
+    }
 
     private void registerCommand(String command) {
         try {

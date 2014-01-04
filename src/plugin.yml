@@ -1,7 +1,9 @@
 name: EchoTell
 main: me.cnaude.plugin.EchoTell.EchoTell
-version: 0.1.0
-authors: [cnaude]
+version: 0.3.0
+authors: 
+- cnaude
+- modwizcode
 commands:
   t:
     description: Sends a message to another player
@@ -12,4 +14,6 @@ commands:
     aliases: [reply]
 permissions:
   echotell:
+    description: Use /t [player] [message] and /r [message]
+  echotell.use:
     description: Use /t [player] [message] and /r [message]
